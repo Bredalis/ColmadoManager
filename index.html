@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#2980b9">
+    <title>ColmadoManager</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2980b9">
+    
+    <link rel="shortcut icon" href="icon-512.png" type="image/x-icon">
+    
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiQ29sbWFkb01hbmFnZXIiLCJzaG9ydF9uYW1lIjoiQ29sbWFkbyIsInN0YXJ0X3VybCI6Ii4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjZmZmIiwidGhlbWVfY29sb3IiOiIjMjk4MGI5In0=">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background: #f0f2f5; min-height: 100vh; -webkit-tap-highlight-color: transparent; }
+        
+        .header {
+            background: #2980b9;
+            color: white;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+        .header h1 { font-size: 20px; font-weight: 600; }
+        .header p { font-size: 12px; opacity: 0.9; margin-top: 2px; }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            background: white;
+            padding: 5px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .tab {
+            flex: 1;
+            padding: 12px 8px;
+            border: none;
+            background: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .tab.active {
+            background: #2980b9;
+            color: white;
+            box-shadow: 0 2px 8px rgba(41,128,185,0.3);
+        }
+        .tab .badge {
+            background: #e74c3c;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 4px;
+            display: none;
+        }
+        .tab .badge.show { display: inline; }
+        
+        .section { display: none; animation: fadeIn 0.3s; }
+        .section.active { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .form-group { margin-bottom: 12px; }
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 5px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: border-color 0.2s;
+            background: #fafafa;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #2980b9;
+            background: white;
+        }
+        textarea { min-height: 80px; resize: vertical; }
+        
+        .search-box {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        .search-box input {
+            padding-left: 45px;
+            background: #f5f5f5;
+        }
+        .search-box::before {
+            content: "🔍";
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-primary {
+            background: #2980b9;
+            color: white;
+            box-shadow: 0 4px 12px rgba(41,128,185,0.3);
+        }
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-success {
+            background: #27ae60;
+            color: white;
+            padding: 10px 16px;
+            font-size: 13px;
+            width: auto;
+        }
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+            padding: 10px 16px;
+            font-size: 13px;
+            width: auto;
+        }
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+            padding: 10px 16px;
+            font-size: 13px;
+            width: auto;
+        }
+        .btn-small {
+            padding: 8px 14px;
+            font-size: 12px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .item-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .item {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #eee;
+        }
+        .item-info h4 {
+            font-size: 15px;
+            color: #2c3e50;
+            margin-bottom: 3px;
+        }
+        .item-info p {
+            font-size: 13px;
+            color: #888;
+        }
+        .item-actions { display: flex; gap: 6px; }
+        
+        .deuda-card { border-left: 4px solid #e74c3c; }
+        .deuda-card.pagada { border-left-color: #27ae60; opacity: 0.7; }
+        .deuda-card.vieja { border-left-color: #f39c12; background: #fffbeb; }
+        
+        .deuda-monto {
+            font-size: 18px;
+            font-weight: 700;
+            color: #e74c3c;
+        }
+        .deuda-monto.pagada { color: #27ae60; text-decoration: line-through; }
+        
+        .estado-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .estado-pendiente { background: #ffebee; color: #c62828; }
+        .estado-pagada { background: #e8f5e9; color: #2e7d32; }
+        .estado-vieja { background: #fff3e0; color: #e65100; }
+        
+        .alerta-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #f39c12;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+        
+        .total-box {
+            background: linear-gradient(135deg, #2980b9, #1a5276);
+            color: white;
+            padding: 25px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(41,128,185,0.3);
+        }
+        .total-box p { font-size: 14px; opacity: 0.9; margin-bottom: 5px; }
+        .total-box h2 { font-size: 36px; font-weight: 800; }
+        
+        .reporte-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .reporte-nombre { font-weight: 600; color: #2c3e50; }
+        .reporte-monto { font-size: 18px; font-weight: 700; color: #e74c3c; }
+        
+        .recordatorio-card {
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+            border: 1px solid #ffcc80;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .recordatorio-icon {
+            font-size: 32px;
+        }
+        .recordatorio-info {
+            flex: 1;
+        }
+        .recordatorio-info h4 {
+            font-size: 15px;
+            color: #e65100;
+            margin-bottom: 4px;
+        }
+        .recordatorio-info p {
+            font-size: 13px;
+            color: #bf360c;
+        }
+        .recordatorio-dias {
+            background: #f39c12;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        
+        .filtros {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+        .filtro-btn {
+            padding: 8px 16px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .filtro-btn.active {
+            background: #2980b9;
+            color: white;
+            border-color: #2980b9;
+        }
+        
+        .empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+        .empty-icon { font-size: 48px; margin-bottom: 10px; }
+        
+        .offline-badge {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .offline-badge.show { display: block; animation: slideUp 0.3s; }
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @media (max-width: 480px) {
+            .container { padding: 10px; }
+            .card { padding: 15px; border-radius: 12px; }
+            .tab { font-size: 12px; padding: 10px 5px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-content">
+            <div class="header-icon">🏪</div>
+            <div>
+                <h1>ColmadoManager</h1>
+                <p>Control de deudas y clientes</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('clientes', this)">
+                👥 Clientes
+            </button>
+            <button class="tab" onclick="showTab('deudas', this)">
+                💰 Deudas
+                <span class="badge" id="badgeDeudas"></span>
+            </button>
+            <button class="tab" onclick="showTab('recordatorios', this)">
+                🔔 Alertas
+                <span class="badge" id="badgeAlertas"></span>
+            </button>
+            <button class="tab" onclick="showTab('reportes', this)">
+                📊 Reportes
+            </button>
+        </div>
+
+        <!-- CLIENTES -->
+        <div id="clientes" class="section active">
+            <div class="card">
+                <div class="card-title">➕ Nuevo Cliente</div>
+                <div class="form-group">
+                    <label>Nombre completo</label>
+                    <input type="text" id="cliNombre" placeholder="Ej: Juan Pérez">
+                </div>
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="tel" id="cliTelefono" placeholder="Ej: 809-123-4567">
+                </div>
+                <div class="form-group">
+                    <label>Dirección</label>
+                    <input type="text" id="cliDireccion" placeholder="Ej: Calle A #10">
+                </div>
+                <button class="btn btn-primary" onclick="agregarCliente()">💾 Guardar Cliente</button>
+            </div>
+
+            <div class="card">
+                <div class="card-title">📋 Mis Clientes (<span id="totalClientes">0</span>)</div>
+                
+                <div class="search-box">
+                    <input type="text" id="buscarCliente" placeholder="Buscar cliente por nombre..." onkeyup="buscarClientes()">
+                </div>
+                
+                <div id="listaClientes" class="item-list">
+                    <div class="empty">
+                        <div class="empty-icon">👤</div>
+                        <p>No hay clientes registrados</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DEUDAS -->
+        <div id="deudas" class="section">
+            <div class="card">
+                <div class="card-title">➕ Nueva Deuda</div>
+                <div class="form-group">
+                    <label>Cliente</label>
+                    <select id="deuCliente">
+                        <option value="">Seleccionar cliente...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Monto ($)</label>
+                    <input type="number" id="deuMonto" placeholder="Ej: 500" min="1">
+                </div>
+                <div class="form-group">
+                    <label>Fecha</label>
+                    <input type="date" id="deuFecha">
+                </div>
+                <div class="form-group">
+                    <label>Notas (opcional)</label>
+                    <textarea id="deuNotas" placeholder="Ej: Fiado 2 cervezas y 1 arroz"></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="agregarDeuda()">💾 Registrar Deuda</button>
+            </div>
+
+            <div class="card">
+                <div class="card-title">📋 Deudas Registradas</div>
+                
+                <div class="filtros">
+                    <button class="filtro-btn active" onclick="filtrarDeudas('todas', this)">Todas</button>
+                    <button class="filtro-btn" onclick="filtrarDeudas('pendientes', this)">Pendientes</button>
+                    <button class="filtro-btn" onclick="filtrarDeudas('pagadas', this)">Pagadas</button>
+                    <button class="filtro-btn" onclick="filtrarDeudas('viejas', this)">⚠️ Viejas</button>
+                </div>
+                
+                <div id="listaDeudas" class="item-list">
+                    <div class="empty">
+                        <div class="empty-icon">💰</div>
+                        <p>No hay deudas registradas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RECORDATORIOS / ALERTAS -->
+        <div id="recordatorios" class="section">
+            <div class="total-box" style="background: linear-gradient(135deg, #f39c12, #e67e22);">
+                <p>⚠️ Deudas con más de 30 días</p>
+                <h2 id="totalViejas">$0</h2>
+            </div>
+
+            <div class="card">
+                <div class="card-title">🔔 Deudas que necesitan atención</div>
+                <div id="listaRecordatorios">
+                    <div class="empty">
+                        <div class="empty-icon">🎉</div>
+                        <p>No hay deudas viejas. ¡Todo está al día!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- REPORTES -->
+        <div id="reportes" class="section">
+            <div class="total-box">
+                <p>💵 Total Adeudado</p>
+                <h2 id="totalAdeudado">$0</h2>
+            </div>
+
+            <div class="card">
+                <div class="card-title">📊 Deudas por Cliente</div>
+                <div id="reporteClientes">
+                    <div class="empty">
+                        <div class="empty-icon">📈</div>
+                        <p>No hay deudas pendientes</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="offline-badge" id="offlineBadge">📴 Modo Offline</div>
+
+    <script>
+        // ===== DATOS =====
+        let clientes = JSON.parse(localStorage.getItem('cm_clientes')) || [];
+        let deudas = JSON.parse(localStorage.getItem('cm_deudas')) || [];
+        let nextId = Math.max(0, ...clientes.map(c => c.id), ...deudas.map(d => d.id)) + 1;
+        let filtroActual = 'todas';
+
+        // ===== UTILIDADES =====
+        function guardar() {
+            localStorage.setItem('cm_clientes', JSON.stringify(clientes));
+            localStorage.setItem('cm_deudas', JSON.stringify(deudas));
+            actualizarBadges();
+        }
+
+        function formatearFecha(fecha) {
+            const f = new Date(fecha + 'T00:00:00');
+            return f.toLocaleDateString('es-DO', { day: '2-digit', month: 'short', year: 'numeric' });
+        }
+
+        function formatearMonto(monto) {
+            return '$' + monto.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        function diasDesde(fecha) {
+            const hoy = new Date();
+            hoy.setHours(0,0,0,0);
+            const f = new Date(fecha + 'T00:00:00');
+            const diff = hoy - f;
+            return Math.floor(diff / (1000 * 60 * 60 * 24));
+        }
+
+        function actualizarBadges() {
+            const pendientes = deudas.filter(d => d.estado === 'Pendiente').length;
+            const viejas = deudas.filter(d => d.estado === 'Pendiente' && diasDesde(d.fecha) > 30).length;
+            
+            const badgeDeudas = document.getElementById('badgeDeudas');
+            const badgeAlertas = document.getElementById('badgeAlertas');
+            
+            if(pendientes > 0) {
+                badgeDeudas.textContent = pendientes;
+                badgeDeudas.classList.add('show');
+            } else {
+                badgeDeudas.classList.remove('show');
+            }
+            
+            if(viejas > 0) {
+                badgeAlertas.textContent = viejas;
+                badgeAlertas.classList.add('show');
+            } else {
+                badgeAlertas.classList.remove('show');
+            }
+        }
+
+        // ===== NAVEGACIÓN =====
+        function showTab(tab, btn) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(tab).classList.add('active');
+            
+            if(tab === 'deudas') {
+                cargarSelectClientes();
+                renderDeudas();
+            }
+            if(tab === 'recordatorios') generarRecordatorios();
+            if(tab === 'reportes') generarReportes();
+        }
+
+        // ===== CLIENTES =====
+        function agregarCliente() {
+            const nombre = document.getElementById('cliNombre').value.trim();
+            if(!nombre) return alert('❌ Ingrese el nombre del cliente');
+            
+            clientes.push({
+                id: nextId++,
+                nombre,
+                telefono: document.getElementById('cliTelefono').value.trim(),
+                direccion: document.getElementById('cliDireccion').value.trim()
+            });
+            
+            guardar();
+            limpiar('cli');
+            renderClientes();
+            alert('✅ Cliente guardado');
+        }
+
+        function eliminarCliente(id) {
+            if(!confirm('¿Eliminar este cliente y todas sus deudas?')) return;
+            clientes = clientes.filter(c => c.id !== id);
+            deudas = deudas.filter(d => d.clienteId !== id);
+            guardar();
+            renderClientes();
+            renderDeudas();
+            generarReportes();
+            generarRecordatorios();
+        }
+
+        function buscarClientes() {
+            const texto = document.getElementById('buscarCliente').value.toLowerCase().trim();
+            renderClientes(texto);
+        }
+
+        function renderClientes(filtro = '') {
+            const cont = document.getElementById('listaClientes');
+            const filtrados = filtro 
+                ? clientes.filter(c => c.nombre.toLowerCase().includes(filtro))
+                : clientes;
+            
+            document.getElementById('totalClientes').textContent = filtrados.length;
+            
+            if(filtrados.length === 0) {
+                cont.innerHTML = `
+                    <div class="empty">
+                        <div class="empty-icon">${filtro ? '🔍' : '👤'}</div>
+                        <p>${filtro ? 'No se encontraron clientes' : 'No hay clientes registrados'}</p>
+                    </div>`;
+                return;
+            }
+            
+            cont.innerHTML = filtrados.map(c => {
+                const deudaTotal = deudas
+                    .filter(d => d.clienteId === c.id && d.estado === 'Pendiente')
+                    .reduce((s, d) => s + d.monto, 0);
+                
+                return `
+                <div class="item">
+                    <div class="item-info" style="flex:1">
+                        <h4>${c.nombre}</h4>
+                        <p>📞 ${c.telefono || 'Sin teléfono'} &nbsp;|&nbsp; 📍 ${c.direccion || 'Sin dirección'}</p>
+                        ${deudaTotal > 0 ? `<p style="color:#e74c3c; font-weight:600; margin-top:4px;">💰 Debe: ${formatearMonto(deudaTotal)}</p>` : ''}
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn-small btn-danger" onclick="eliminarCliente(${c.id})">🗑️</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        // ===== DEUDAS =====
+        function cargarSelectClientes() {
+            const sel = document.getElementById('deuCliente');
+            sel.innerHTML = '<option value="">Seleccionar cliente...</option>' +
+                clientes.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
+        }
+
+        function agregarDeuda() {
+            const clienteId = parseInt(document.getElementById('deuCliente').value);
+            const monto = parseFloat(document.getElementById('deuMonto').value);
+            
+            if(!clienteId) return alert('❌ Seleccione un cliente');
+            if(!monto || monto <= 0) return alert('❌ Ingrese un monto válido');
+            
+            deudas.push({
+                id: nextId++,
+                clienteId,
+                fecha: document.getElementById('deuFecha').value || new Date().toISOString().split('T')[0],
+                monto,
+                estado: 'Pendiente',
+                notas: document.getElementById('deuNotas').value.trim()
+            });
+            
+            guardar();
+            limpiar('deu');
+            renderDeudas();
+            alert('✅ Deuda registrada');
+        }
+
+        function marcarPagada(id) {
+            const d = deudas.find(x => x.id === id);
+            if(d) {
+                d.estado = 'Pagada';
+                guardar();
+                renderDeudas();
+                generarReportes();
+                generarRecordatorios();
+            }
+        }
+
+        function eliminarDeuda(id) {
+            if(!confirm('¿Eliminar esta deuda?')) return;
+            deudas = deudas.filter(d => d.id !== id);
+            guardar();
+            renderDeudas();
+            generarReportes();
+            generarRecordatorios();
+        }
+
+        function filtrarDeudas(tipo, btn) {
+            filtroActual = tipo;
+            document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderDeudas();
+        }
+
+        function renderDeudas() {
+            const cont = document.getElementById('listaDeudas');
+            let deudasMostrar = [...deudas].sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+            
+            if(filtroActual === 'pendientes') {
+                deudasMostrar = deudasMostrar.filter(d => d.estado === 'Pendiente');
+            } else if(filtroActual === 'pagadas') {
+                deudasMostrar = deudasMostrar.filter(d => d.estado === 'Pagada');
+            } else if(filtroActual === 'viejas') {
+                deudasMostrar = deudasMostrar.filter(d => d.estado === 'Pendiente' && diasDesde(d.fecha) > 30);
+            }
+            
+            if(deudasMostrar.length === 0) {
+                cont.innerHTML = `
+                    <div class="empty">
+                        <div class="empty-icon">💰</div>
+                        <p>No hay deudas en esta categoría</p>
+                    </div>`;
+                return;
+            }
+            
+            cont.innerHTML = deudasMostrar.map(d => {
+                const cli = clientes.find(c => c.id === d.clienteId);
+                const esPagada = d.estado === 'Pagada';
+                const dias = diasDesde(d.fecha);
+                const esVieja = !esPagada && dias > 30;
+                
+                return `
+                <div class="item deuda-card ${esPagada ? 'pagada' : ''} ${esVieja ? 'vieja' : ''}">
+                    <div class="item-info" style="flex:1">
+                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px; flex-wrap:wrap">
+                            <h4>${cli ? cli.nombre : 'Desconocido'}</h4>
+                            <span class="estado-badge estado-${esVieja ? 'vieja' : d.estado.toLowerCase()}">${esVieja ? '⚠️ ' + dias + ' días' : d.estado}</span>
+                        </div>
+                        <p>📅 ${formatearFecha(d.fecha)} ${d.notas ? '| 📝 ' + d.notas : ''}</p>
+                    </div>
+                    <div style="text-align:right; margin-right:10px">
+                        <div class="deuda-monto ${esPagada ? 'pagada' : ''}">${formatearMonto(d.monto)}</div>
+                    </div>
+                    <div class="item-actions">
+                        ${!esPagada ? `<button class="btn-small btn-success" onclick="marcarPagada(${d.id})">✓ Pagar</button>` : ''}
+                        <button class="btn-small btn-danger" onclick="eliminarDeuda(${d.id})">🗑️</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        // ===== RECORDATORIOS =====
+        function generarRecordatorios() {
+            const cont = document.getElementById('listaRecordatorios');
+            const viejas = deudas
+                .filter(d => d.estado === 'Pendiente' && diasDesde(d.fecha) > 30)
+                .sort((a,b) => diasDesde(b.fecha) - diasDesde(a.fecha));
+            
+            const totalViejas = viejas.reduce((s, d) => s + d.monto, 0);
+            document.getElementById('totalViejas').textContent = formatearMonto(totalViejas);
+            
+            if(viejas.length === 0) {
+                cont.innerHTML = `
+                    <div class="empty">
+                        <div class="empty-icon">🎉</div>
+                        <p>No hay deudas viejas. ¡Todo está al día!</p>
+                    </div>`;
+                return;
+            }
+            
+            cont.innerHTML = viejas.map(d => {
+                const cli = clientes.find(c => c.id === d.clienteId);
+                const dias = diasDesde(d.fecha);
+                return `
+                <div class="recordatorio-card">
+                    <div class="recordatorio-icon">⏰</div>
+                    <div class="recordatorio-info">
+                        <h4>${cli ? cli.nombre : 'Desconocido'}</h4>
+                        <p>${formatearMonto(d.monto)} — ${d.notas || 'Sin notas'}</p>
+                        <p style="margin-top:4px; font-size:12px;">📅 Desde: ${formatearFecha(d.fecha)}</p>
+                    </div>
+                    <div class="recordatorio-dias">${dias} días</div>
+                </div>`;
+            }).join('');
+        }
+
+        // ===== REPORTES =====
+        function generarReportes() {
+            const pendientes = deudas.filter(d => d.estado === 'Pendiente');
+            const total = pendientes.reduce((s, d) => s + d.monto, 0);
+            document.getElementById('totalAdeudado').textContent = formatearMonto(total);
+            
+            const porCliente = {};
+            pendientes.forEach(d => {
+                const cli = clientes.find(c => c.id === d.clienteId);
+                const nom = cli ? cli.nombre : 'Desconocido';
+                porCliente[nom] = (porCliente[nom] || 0) + d.monto;
+            });
+            
+            const cont = document.getElementById('reporteClientes');
+            if(Object.keys(porCliente).length === 0) {
+                cont.innerHTML = `
+                    <div class="empty">
+                        <div class="empty-icon">📈</div>
+                        <p>No hay deudas pendientes</p>
+                    </div>`;
+                return;
+            }
+            
+            const ordenado = Object.entries(porCliente).sort((a,b) => b[1] - a[1]);
+            cont.innerHTML = ordenado.map(([nombre, monto]) => `
+                <div class="reporte-item">
+                    <span class="reporte-nombre">👤 ${nombre}</span>
+                    <span class="reporte-monto">${formatearMonto(monto)}</span>
+                </div>
+            `).join('');
+        }
+
+        // ===== UTILIDADES =====
+        function limpiar(prefijo) {
+            document.querySelectorAll(`[id^="${prefijo}"]`).forEach(el => {
+                if(el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') el.value = '';
+            });
+        }
+
+        // ===== OFFLINE =====
+        function updateOnlineStatus() {
+            const badge = document.getElementById('offlineBadge');
+            badge.classList.toggle('show', !navigator.onLine);
+        }
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        updateOnlineStatus();
+
+        // ===== INICIALIZAR =====
+        document.getElementById('deuFecha').value = new Date().toISOString().split('T')[0];
+        renderClientes();
+        renderDeudas();
+        actualizarBadges();
+
+        // Registrar Service Worker
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('sw.js')
+            .then(() => console.log('SW registrado'))
+            .catch(err => console.log('SW error:', err));
+        }
+    </script>
+</body>
+</html>

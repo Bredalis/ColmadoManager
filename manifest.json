@@ -1,0 +1,71 @@
+{
+  "name": "ColmadoManager",
+  "short_name": "Colmado",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2980b9",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot1.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Registro de clientes fácil y rápido"
+    },
+    {
+      "src": "screenshot2.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Control de deudas por cliente"
+    },
+    {
+      "src": "screenshot3.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Alertas de deudas viejas"
+    },
+    {
+      "src": "screenshot4.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Reportes y totales"
+    },
+    {
+      "src": "screenshot5.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Búsqueda de clientes"
+    },
+    {
+      "src": "screenshot6.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Interfaz simple y moderna"
+    }
+  ],
+  "description": "Controla deudas y clientes de tu colmado fácilmente",
+  "categories": ["finance", "business", "productivity"],
+  "lang": "es",
+  "dir": "ltr"
+}
