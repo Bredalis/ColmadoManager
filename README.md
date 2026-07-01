@@ -76,7 +76,7 @@ Sabemos que en un colmado no hay tiempo para apps complicadas. Por eso ColmadoMa
 
 ## 🚀 Demo en vivo
 
-🔗 **[https://colmado-manager.netlify.app](https://colmadomanager.netlify.app)**
+🔗 **[https://colmadomanager.netlify.app](https://colmadomanager.netlify.app)**
 
 ---
 
