@@ -2,7 +2,7 @@
 
 **Control de Deudas y Clientes para Colmados, Bodegas y Tiendas de Barrio**
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/f0247fc7-245e-416f-84ea-23f2133beb04/deploy-status)](https://colmadomanager.netlify.app)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/5efa6f65-6d75-4e4d-9411-45a98a89c1b3/deploy-status)](https://app.netlify.com/projects/colmadomanager/deploys)
 ![PWA](https://img.shields.io/badge/PWA-Progressive%20Web%20App-blue)
 
 ---
